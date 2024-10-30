@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/dream_shops
+    username: root  # replace with your MySQL username
+    password: my-secret-pw  # replace with your MySQL password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true  # optional, to show SQL queries in the console
+
+
+api:
+  prefix: /api/v1

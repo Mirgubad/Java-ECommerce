@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=YourStrong!Passw0rd
+      - MYSQL_DATABASE=dream_shops
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "3306:3306"
+
