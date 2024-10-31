@@ -1,17 +1,21 @@
 package com.dailycodework.dreamshops.service.product;
 
+import com.dailycodework.dreamshops.criteria.ProductFilterCriteria;
+import com.dailycodework.dreamshops.dto.ProductDto;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
+import com.dailycodework.dreamshops.mapper.ProductMapper;
 import com.dailycodework.dreamshops.model.Category;
 import com.dailycodework.dreamshops.model.Product;
 import com.dailycodework.dreamshops.repository.CategoryRepository;
 import com.dailycodework.dreamshops.repository.ProductRepository;
 import com.dailycodework.dreamshops.request.AddProductRequest;
 import com.dailycodework.dreamshops.request.ProductUpdateRequest;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,17 +25,20 @@ public class ProductService implements  IProductService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public Product addProduct(AddProductRequest request) {
+    public ProductDto addProduct(AddProductRequest request) {
         // Check if the category exists
         // If yes, set it is the new product category
         // If no, the save it as a new category
         // The set as the new Product category
-        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+        String categoryName=request.getCategory().getName();
+
+        Category category = Optional.ofNullable(categoryRepository.findByName(categoryName))
                 .orElseGet(()->
-                        categoryRepository.save(new Category(request.getCategory().getName())));
+                        categoryRepository.save(new Category(categoryName)));
 
         request.setCategory(category);
-        return productRepository.save(createProduct(request,category));
+        Product newProduct= createProduct(request,category);
+        return ProductMapper.mapToProductDto(productRepository.save(newProduct));
     }
 
     private  Product createProduct(AddProductRequest request, Category category){
@@ -41,7 +48,7 @@ public class ProductService implements  IProductService {
                 request.getDescription(),
                 request.getPrice(),
                 request.getQuantity(),
-                request.getCategory());
+                category);
     }
 
     @Override
@@ -79,37 +86,85 @@ public class ProductService implements  IProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategoryName(String categoryName) {
-        return productRepository.findByCategory(categoryName);
+    public List<ProductDto> getProductsByCategoryName(String categoryName) {
+        List<Product> products = productRepository.findByCategory_Name(categoryName);
+        List<ProductDto> productsDto=products.stream()
+                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
+        return productsDto;
     }
 
     @Override
-    public List<Product> getProductsByBrandName(String brandName) {
-        return productRepository.findByBrand(brandName);
+    public List<ProductDto> getProductsByBrandName(String brandName) {
+        List<Product> products = productRepository.findByBrand(brandName);
+        List<ProductDto> productsDto=products.stream()
+                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
+
+        return productsDto;
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDto> getAllProducts() {
+        List<Product> products= productRepository.findAll();
+        List<ProductDto> productDto=products.stream()
+                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
+        return productDto;
     }
 
     @Override
-    public List<Product> getAllProductsByCategoryNameAndBrandName(String categoryName, String brandName) {
-        return productRepository.findByCategoryAndBrand(categoryName,brandName);
+    public List<ProductDto> getAllProductsByCategoryNameAndBrandName(String categoryName, String brandName) {
+        List<Product> products=productRepository.findByCategory_NameAndBrand_Name(categoryName,brandName);
+        List<ProductDto> productsDto=products.stream()
+                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
+        return productsDto;
     }
 
     @Override
-    public List<Product> getAllProductsByName(String name) {
-        return productRepository.findByName(name);
+    public List<ProductDto> getAllProductsByName(String name) {
+        List<Product> products=productRepository.findByName(name);
+        List<ProductDto> productsDto=products.stream()
+                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
+        return productsDto;
     }
 
     @Override
-    public List<Product> getAllProductsByBrandNameAndName(String brandName, String name) {
-        return productRepository.findByBrandAndName(brandName,name);
+    public List<ProductDto> getAllProductsByBrandNameAndName(String brandName, String name) {
+        List<Product> products=productRepository.findByBrandAndName(brandName,name);
+        List<ProductDto> productsDto=products.stream()
+                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
+        return  productsDto;
     }
 
     @Override
     public Long countProductsByBrandNameAndName(String brandName, String name) {
         return productRepository.countByBrandAndName(brandName,name);
     }
+
+
+    public List<ProductDto> filterProducts(ProductFilterCriteria criteria) {
+        List<Product> products;
+
+        boolean productNameIsEmpty = criteria.getProductName() == null;
+        boolean brandNameIsEmpty = criteria.getBrandName() == null;
+        boolean categoryNameIsEmpty = criteria.getCategoryName() == null;
+
+        products = productRepository.findAll().stream()
+                .filter(product -> (productNameIsEmpty || product.getName().toLowerCase().contains(criteria.getProductName().toLowerCase())))
+                .filter(product -> (brandNameIsEmpty || product.getBrand().toLowerCase().contains(criteria.getBrandName().toLowerCase())))
+                .filter(product -> (categoryNameIsEmpty || product.getCategory().getName().toLowerCase().contains(criteria.getCategoryName().toLowerCase())))
+                .filter(product -> (criteria.getMinPrice() == null || product.getPrice().compareTo(criteria.getMinPrice()) >= 0))
+                .filter(product -> (criteria.getMaxPrice() == null || product.getPrice().compareTo(criteria.getMaxPrice()) <= 0))
+                .collect(Collectors.toList());
+
+
+
+        return products.stream()
+                .map(ProductMapper::mapToProductDto)
+                .collect(Collectors.toList());
+    }
+
+    public Long countProducts(ProductFilterCriteria criteria) {
+        return filterProducts(criteria).stream().count();
+    }
 }
+
+

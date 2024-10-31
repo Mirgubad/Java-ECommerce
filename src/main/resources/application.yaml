@@ -9,6 +9,12 @@ spring:
       dialect: org.hibernate.dialect.MySQLDialect
     show-sql: true  # optional, to show SQL queries in the console
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+
 
 api:
   prefix: /api/v1
