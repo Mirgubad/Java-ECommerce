@@ -18,5 +18,14 @@ public class AddProductRequest {
     private String description;
     private BigDecimal price;
     private int quantity;
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     private Category category;
 }

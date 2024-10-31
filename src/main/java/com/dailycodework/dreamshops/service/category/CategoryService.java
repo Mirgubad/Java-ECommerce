@@ -1,5 +1,6 @@
 package com.dailycodework.dreamshops.service.category;
 
+import com.dailycodework.dreamshops.dto.CategoryDto;
 import com.dailycodework.dreamshops.exceptions.ConflictException;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.model.Category;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +30,16 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryDto> getAllCategories() {
+        List<Category> categories= categoryRepository.findAll();
+        List<CategoryDto> categoryDtos= categories.stream()
+                .map(category -> CategoryDto.builder()
+                        .id(category.getId())
+                        .name(category.getName())
+                        .build())
+                .collect(Collectors.toList());
+
+        return categoryDtos;
     }
 
     @Override
