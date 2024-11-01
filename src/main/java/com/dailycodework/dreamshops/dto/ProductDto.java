@@ -76,17 +76,17 @@ public class ProductDto {
         this.category = category;
     }
 
-    public List<Image> getImages() {
+    public List<ImageDto> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<ImageDto> images) {
         this.images = images;
     }
 
     private BigDecimal price;
     private int quantity;
     private CategoryDto category;
-    private List<Image> images;
+    private List<ImageDto> images;
 
 }

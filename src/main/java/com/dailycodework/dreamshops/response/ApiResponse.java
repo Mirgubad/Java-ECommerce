@@ -5,7 +5,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class ApiResponse {
+public class ApiResponse extends Throwable {
     private  String message;
     private  Object data;
 }
