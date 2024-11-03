@@ -1,16 +1,20 @@
 package com.dailycodework.dreamshops.service.product;
 
 import com.dailycodework.dreamshops.criteria.ProductFilterCriteria;
+import com.dailycodework.dreamshops.dto.ImageDto;
 import com.dailycodework.dreamshops.dto.ProductDto;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.mapper.ProductMapper;
 import com.dailycodework.dreamshops.model.Category;
+import com.dailycodework.dreamshops.model.Image;
 import com.dailycodework.dreamshops.model.Product;
 import com.dailycodework.dreamshops.repository.CategoryRepository;
+import com.dailycodework.dreamshops.repository.ImageRepository;
 import com.dailycodework.dreamshops.repository.ProductRepository;
 import com.dailycodework.dreamshops.request.AddProductRequest;
 import com.dailycodework.dreamshops.request.ProductUpdateRequest;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +27,8 @@ public class ProductService implements  IProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private  final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
 
     @Override
     public ProductDto addProduct(AddProductRequest request) {
@@ -38,7 +44,7 @@ public class ProductService implements  IProductService {
 
         request.setCategory(category);
         Product newProduct= createProduct(request,category);
-        return ProductMapper.mapToProductDto(productRepository.save(newProduct));
+        return convertToDto(productRepository.save(newProduct));
     }
 
     private  Product createProduct(AddProductRequest request, Category category){
@@ -85,22 +91,7 @@ public class ProductService implements  IProductService {
         });
     }
 
-    @Override
-    public List<ProductDto> getProductsByCategoryName(String categoryName) {
-        List<Product> products = productRepository.findByCategory_Name(categoryName);
-        List<ProductDto> productsDto=products.stream()
-                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
-        return productsDto;
-    }
 
-    @Override
-    public List<ProductDto> getProductsByBrandName(String brandName) {
-        List<Product> products = productRepository.findByBrand(brandName);
-        List<ProductDto> productsDto=products.stream()
-                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
-
-        return productsDto;
-    }
 
     @Override
     public List<ProductDto> getAllProducts() {
@@ -108,35 +99,6 @@ public class ProductService implements  IProductService {
         List<ProductDto> productDto=products.stream()
                 .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
         return productDto;
-    }
-
-    @Override
-    public List<ProductDto> getAllProductsByCategoryNameAndBrandName(String categoryName, String brandName) {
-        List<Product> products=productRepository.findByCategory_NameAndBrand_Name(categoryName,brandName);
-        List<ProductDto> productsDto=products.stream()
-                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
-        return productsDto;
-    }
-
-    @Override
-    public List<ProductDto> getAllProductsByName(String name) {
-        List<Product> products=productRepository.findByName(name);
-        List<ProductDto> productsDto=products.stream()
-                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
-        return productsDto;
-    }
-
-    @Override
-    public List<ProductDto> getAllProductsByBrandNameAndName(String brandName, String name) {
-        List<Product> products=productRepository.findByBrandAndName(brandName,name);
-        List<ProductDto> productsDto=products.stream()
-                .map(ProductMapper::mapToProductDto).collect(Collectors.toList());
-        return  productsDto;
-    }
-
-    @Override
-    public Long countProductsByBrandNameAndName(String brandName, String name) {
-        return productRepository.countByBrandAndName(brandName,name);
     }
 
 
@@ -164,6 +126,23 @@ public class ProductService implements  IProductService {
 
     public Long countProducts(ProductFilterCriteria criteria) {
         return filterProducts(criteria).stream().count();
+    }
+
+    private  List<ProductDto> convertedProductsDto(List<Product> products){
+        return products.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    private ProductDto convertToDto(Product product){
+        ProductDto productDto=modelMapper.map(product,ProductDto.class);
+        List<Image> images= imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos= images.stream()
+                .map(image -> modelMapper.map(image,ImageDto.class))
+                .toList();
+
+        productDto.setImages(imageDtos);
+        return productDto ;
     }
 }
 

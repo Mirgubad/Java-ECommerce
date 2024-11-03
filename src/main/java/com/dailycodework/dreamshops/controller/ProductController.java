@@ -88,15 +88,4 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/count")
-    public ResponseEntity<ApiResponse> countProductsByBrandAndName(@RequestParam String brand, @RequestParam String name){
-        try {
-            Long count = productService.countProductsByBrandNameAndName(brand, name);
-            return ResponseEntity.ok(new ApiResponse("Products count fetched successfully", count));
-        } catch (Exception e) {
-            return  ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
-        }
-    }
-
-
 }

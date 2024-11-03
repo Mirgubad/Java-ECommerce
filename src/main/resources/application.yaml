@@ -12,6 +12,7 @@ spring:
   jpa:
     hibernate:
       dialect: org.hibernate.dialect.MySQLDialect
+      ddl-auto: update
     show-sql: true  # optional, to show SQL queries in the console
 
 springdoc:

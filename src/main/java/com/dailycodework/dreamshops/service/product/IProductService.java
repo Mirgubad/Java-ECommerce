@@ -14,12 +14,5 @@ public interface IProductService {
     Product getProductById(Long id);
     void deleteProduct(Long id);
     List<ProductDto> filterProducts(ProductFilterCriteria criteria);
-    List<ProductDto> getProductsByCategoryName(String categoryName);
-    List<ProductDto> getProductsByBrandName(String brandName);
     List<ProductDto> getAllProducts();
-    List<ProductDto> getAllProductsByCategoryNameAndBrandName(String categoryName,String brandName);
-    List<ProductDto> getAllProductsByName(String name);
-    List<ProductDto> getAllProductsByBrandNameAndName(String brandName,String name);
-    Long countProductsByBrandNameAndName(String brandName,String name);
-
 }
