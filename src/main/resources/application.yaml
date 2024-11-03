@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
   datasource:
     url: jdbc:mysql://localhost:3306/dream_shops
     username: root  # replace with your MySQL username
@@ -18,3 +23,5 @@ springdoc:
 
 api:
   prefix: /api/v1
+
+

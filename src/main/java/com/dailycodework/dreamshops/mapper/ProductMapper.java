@@ -5,6 +5,8 @@ import com.dailycodework.dreamshops.dto.ImageDto;
 import com.dailycodework.dreamshops.dto.ProductDto;
 import com.dailycodework.dreamshops.model.Product;
 
+import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ProductMapper {
@@ -17,9 +19,12 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
                 .category(new CategoryDto(product.getCategory().getId(), product.getCategory().getName()))
-                .images(product.getImages().stream()
+                .images(product.getImages() == null || product.getImages().isEmpty()
+                        ? null
+                        : product.getImages().stream()
                         .map(image -> new ImageDto(image.getId(), image.getFileName(), image.getDownloadUrl()))
                         .collect(Collectors.toList()))
+
                 .build();
     }
 }
