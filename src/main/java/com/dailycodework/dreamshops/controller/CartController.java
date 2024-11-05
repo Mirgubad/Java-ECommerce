@@ -1,6 +1,8 @@
 package com.dailycodework.dreamshops.controller;
 
+import com.dailycodework.dreamshops.dto.CartDto;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
+import com.dailycodework.dreamshops.mapper.CartMapper;
 import com.dailycodework.dreamshops.model.Cart;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.cart.ICartService;
@@ -23,7 +25,8 @@ public class CartController {
     public ResponseEntity<ApiResponse> getCart(@PathVariable Long cardId) {
         try {
             Cart cart= cartService.getCartById(cardId);
-            return ResponseEntity.ok(new ApiResponse("Success", cart));
+            CartDto cartDto = CartMapper.mapToCartDto(cart);
+            return ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (NotFoundException e) {
             return  ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

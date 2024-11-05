@@ -5,16 +5,19 @@ import com.dailycodework.dreamshops.model.Cart;
 import com.dailycodework.dreamshops.model.CartItem;
 import com.dailycodework.dreamshops.repository.CartItemRepository;
 import com.dailycodework.dreamshops.repository.CartRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @RequiredArgsConstructor
 public class CartService implements  ICartService {
     private final CartRepository cartRepository;
-    private  final CartItemRepository cartItemRepository;
+    private final CartItemRepository cartItemRepository;
+    private  final AtomicLong cartIdGenerator = new AtomicLong(0);
 
     @Override
     public Cart getCartById(Long id) {
@@ -28,6 +31,7 @@ public class CartService implements  ICartService {
     }
 
     @Override
+    @Transactional
     public void clearCart(Long id) {
     Cart cart =getCartById(id);
     cartItemRepository.deleteAllByCartId(id);
@@ -42,5 +46,11 @@ public class CartService implements  ICartService {
                 .stream()
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
+    }
+
+    public Long initializeNewCart() {
+        Cart cart = new Cart();
+        cart.setId(cartIdGenerator.incrementAndGet());
+        return cartRepository.save(cart).getId();
     }
 }
