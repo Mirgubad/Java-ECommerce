@@ -31,6 +31,11 @@ public class CartService implements  ICartService {
     }
 
     @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.getByUserId(userId);
+    }
+
+    @Override
     @Transactional
     public void clearCart(Long id) {
     Cart cart =getCartById(id);
