@@ -2,7 +2,6 @@ package com.dailycodework.dreamshops.model;
 
 import com.dailycodework.dreamshops.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "`order`") // for MySQL
+@Table(name = "`orders`") // for MySQL
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

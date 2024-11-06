@@ -35,6 +35,7 @@ public class UserService implements  IUserService {
                     user.setFirstName(req.getFirstName());
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
+                    user.setPassword(req.getPassword());
                     return userRepository.save(user);
                 }).orElseThrow(()-> new ConflictException(request.getEmail() + " already exists!"));
     }

@@ -1,6 +1,5 @@
 package com.dailycodework.dreamshops.controller;
 
-
 import com.dailycodework.dreamshops.dto.UserDto;
 import com.dailycodework.dreamshops.exceptions.ConflictException;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
@@ -10,7 +9,6 @@ import com.dailycodework.dreamshops.request.UpdadteUserRequest;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.user.IUserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
