@@ -1,8 +1,10 @@
 package com.dailycodework.dreamshops.controller;
 
 
+import com.dailycodework.dreamshops.dto.UserDto;
 import com.dailycodework.dreamshops.exceptions.ConflictException;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
+import com.dailycodework.dreamshops.model.User;
 import com.dailycodework.dreamshops.request.CreateUserRequest;
 import com.dailycodework.dreamshops.request.UpdadteUserRequest;
 import com.dailycodework.dreamshops.response.ApiResponse;
@@ -23,7 +25,9 @@ public class UserController {
     @GetMapping("/{userId}/user")
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
         try {
-            return ResponseEntity.ok(new ApiResponse("User fetched successfully", userService.getUserById(userId)));
+            User user = userService.getUserById(userId);
+            UserDto userDto = userService.convertToDto(user);
+            return ResponseEntity.ok(new ApiResponse("User fetched successfully", userDto));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
@@ -32,7 +36,9 @@ public class UserController {
     @PostMapping("/create/user")
     public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
         try {
-            return ResponseEntity.status(CREATED).body(new ApiResponse("User created successfully", userService.createUser(request)));
+            User user = userService.createUser(request);
+            UserDto userDto = userService.convertToDto(user);
+            return ResponseEntity.status(CREATED).body(new ApiResponse("User created successfully", userDto));
         } catch (ConflictException e) {
             return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }
@@ -41,7 +47,9 @@ public class UserController {
     @PutMapping("/{userId}/update")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdadteUserRequest request, @PathVariable Long userId) {
         try {
-            return ResponseEntity.ok(new ApiResponse("User updated successfully", userService.updateUser(request, userId)));
+            User user = userService.updateUser(request, userId);
+            UserDto userDto = userService.convertToDto(user);
+            return ResponseEntity.ok(new ApiResponse("User updated successfully", userDto));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }

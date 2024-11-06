@@ -16,6 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "`order`") // for MySQL
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
