@@ -1,5 +1,6 @@
 package com.dailycodework.dreamshops.controller;
 
+import com.dailycodework.dreamshops.dto.OrderDto;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.model.Order;
 import com.dailycodework.dreamshops.response.ApiResponse;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -31,7 +34,7 @@ public class OrderController {
     @GetMapping("/{orderId}/order")
     public ResponseEntity<ApiResponse> getOrder(@PathVariable Long orderId) {
         try {
-            Order order = orderService.getOrder(orderId);
+            OrderDto order = orderService.getOrder(orderId);
             return ResponseEntity.ok(new ApiResponse("Order retrieved successfully", order));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Oops!",e.getMessage()));
@@ -41,7 +44,8 @@ public class OrderController {
     @GetMapping("/{userId}/user-orders")
     public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
         try {
-            return ResponseEntity.ok(new ApiResponse("Orders retrieved successfully", orderService.getUserOrders(userId)));
+            List<OrderDto> orders = orderService.getUserOrders(userId);
+            return ResponseEntity.ok(new ApiResponse("Orders retrieved successfully", orders));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Oops!", e.getMessage()));
         }
