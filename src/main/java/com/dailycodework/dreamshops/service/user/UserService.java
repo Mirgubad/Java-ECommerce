@@ -1,5 +1,6 @@
 package com.dailycodework.dreamshops.service.user;
 
+import com.dailycodework.dreamshops.exceptions.ConflictException;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.model.User;
 import com.dailycodework.dreamshops.repository.UserRepository;
@@ -33,7 +34,7 @@ public class UserService implements  IUserService {
                     user.setLastName(req.getLastName());
                     user.setEmail(req.getEmail());
                     return userRepository.save(user);
-                }).orElseThrow(()-> new NotFoundException("User not found"));
+                }).orElseThrow(()-> new ConflictException(request.getEmail() + " already exists!"));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class UserService implements  IUserService {
                     u.setLastName(user.getLastName());
                     return userRepository.save(u);
                 })
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found!"));
     }
 
     @Override
