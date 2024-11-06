@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class CartMapper {
 
-    public  static CartDto mapToCartDto(Cart cart) {
+    static CartDto mapToCartDto(Cart cart) {
         CartDto cartDto = new CartDto();
         cartDto.setId(cart.getId());
         cartDto.setTotalAmount(cart.getTotalAmount());

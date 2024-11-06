@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -26,20 +25,22 @@ public class OrderService implements IOrderService{
     private final ProductRepository productRepository;
     private final ICartService cartService;
     private final ModelMapper modelMapper;
+
     @Override
-    public Order placeOrder(Long userId) {
-        Cart cart = cartService.getCartByUserId(userId);
-
+    public OrderDto placeOrder(Long userId) {
+        Cart cart   = cartService.getCartByUserId(userId);
         Order order = createOrder(cart);
-        List<OrderItem> orderItems = createOrderItems(order, cart);
-
-        order.setOrderItems(new HashSet<>(orderItems));
-        order.setTotalAmount(calculateTotalAmount(orderItems));
-
+        List<OrderItem> orderItemList = createOrderItems(order, cart);
+        updateOrderItems(order, orderItemList);
+        order.setTotalAmount(calculateTotalAmount(orderItemList));
         Order savedOrder = orderRepository.save(order);
         cartService.clearCart(cart.getId());
+        return convertToDto(savedOrder);
+    }
 
-        return  savedOrder;
+    public void updateOrderItems(Order order, List<OrderItem> newOrderItems) {
+        order.setOrderItems(newOrderItems);
+        orderRepository.save(order);  // Save the order after updating items
     }
 
     private Order createOrder(Cart cart){

@@ -6,7 +6,6 @@ import com.dailycodework.dreamshops.model.Order;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.order.IOrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class OrderController {
     @PostMapping("/place-order")
     public ResponseEntity<ApiResponse> createOrder(@RequestParam Long userId) {
         try {
-            Order order = orderService.placeOrder(userId);
+            OrderDto order = orderService.placeOrder(userId);
             return ResponseEntity.ok(new ApiResponse( "Order created successfully", order));
         } catch (Exception e) {
            return  ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Error occured", null));

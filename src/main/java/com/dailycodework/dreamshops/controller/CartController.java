@@ -2,12 +2,11 @@ package com.dailycodework.dreamshops.controller;
 
 import com.dailycodework.dreamshops.dto.CartDto;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
-import com.dailycodework.dreamshops.mapper.CartMapper;
 import com.dailycodework.dreamshops.model.Cart;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.cart.ICartService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +18,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RestController
 @RequestMapping("${api.prefix}/carts")
 public class CartController {
-    private  final ICartService cartService;
+    private final ICartService cartService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/{cardId}")
     public ResponseEntity<ApiResponse> getCart(@PathVariable Long cardId) {
         try {
             Cart cart= cartService.getCartById(cardId);
-            CartDto cartDto = CartMapper.mapToCartDto(cart);
+            CartDto cartDto = mapToCartDto(cart);
             return ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (NotFoundException e) {
             return  ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -52,5 +52,8 @@ public class CartController {
         }
     }
 
+    private  CartDto mapToCartDto(Cart cart){
+        return modelMapper.map(cart, CartDto.class);
+    }
 
 }

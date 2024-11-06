@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,4 +33,13 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private  User user;
+
+
+    public void setOrderItems(List<OrderItem> items) {
+        this.orderItems.clear();  // Clear the existing collection to prevent replacements
+        for (OrderItem item : items) {
+            item.setOrder(this);  // Set the order reference in each OrderItem
+            this.orderItems.add(item);  // Add item to the collection
+        }
+    }
 }

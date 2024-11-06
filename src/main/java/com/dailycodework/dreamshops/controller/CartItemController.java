@@ -1,9 +1,13 @@
 package com.dailycodework.dreamshops.controller;
 
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
+import com.dailycodework.dreamshops.model.Cart;
+import com.dailycodework.dreamshops.model.User;
+import com.dailycodework.dreamshops.repository.UserRepository;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.cart.ICartItemService;
 import com.dailycodework.dreamshops.service.cart.ICartService;
+import com.dailycodework.dreamshops.service.user.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +17,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("${api.prefix}/cartItems")
 public class CartItemController {
-    private  final ICartItemService cartItemService;
+    private final ICartItemService cartItemService;
     private final ICartService cartService;
+    private final IUserService userService;
 
     @PostMapping("/item/add")
     public ResponseEntity<ApiResponse> addCartItem(@RequestParam Long productId,
-                                                   @RequestParam(required = false) Long cartId,
-                                                   @RequestParam Integer quantity) {
+                                                   @RequestParam Integer quantity)
+    {
         try {
-            if(cartId == null) {
-                cartId = cartService.initializeNewCart();
-            }
-            cartItemService.addItem(cartId, productId, quantity);
+            User user = userService.getUserById(6L);
+            Cart cart = cartService.initializeNewCart(user);
+            cartItemService.addItem(cart.getId(), productId, quantity);
 
             return ResponseEntity.ok(new ApiResponse("Item added successfully",null ));
 

@@ -1,12 +1,10 @@
 package com.dailycodework.dreamshops.data;
 
-import com.dailycodework.dreamshops.model.Product;
 import com.dailycodework.dreamshops.model.User;
 import com.dailycodework.dreamshops.repository.ProductRepository;
 import com.dailycodework.dreamshops.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
