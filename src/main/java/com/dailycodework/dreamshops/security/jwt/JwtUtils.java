@@ -28,8 +28,7 @@ public class JwtUtils {
 
         List<String> roles = userPrincipal.getAuthorities()
                 .stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+                .map(GrantedAuthority::getAuthority).toList();
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getEmail())

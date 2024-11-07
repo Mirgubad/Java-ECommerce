@@ -1,10 +1,12 @@
 package com.dailycodework.dreamshops.controller;
 
 import com.dailycodework.dreamshops.request.LoginRequest;
+import com.dailycodework.dreamshops.request.RegisterRequest;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.response.JwtResponse;
 import com.dailycodework.dreamshops.security.jwt.JwtUtils;
 import com.dailycodework.dreamshops.security.user.ShopUserDetails;
+import com.dailycodework.dreamshops.service.user.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final IUserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request){
@@ -44,6 +47,15 @@ public class AuthController {
             return ResponseEntity.status(UNAUTHORIZED).body(new ApiResponse(e.getMessage(), null));
         }
 
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest request){
+        try {
+            return ResponseEntity.ok(new ApiResponse("User registered successfully", userService.registerUser(request)));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
+        }
     }
 
 }

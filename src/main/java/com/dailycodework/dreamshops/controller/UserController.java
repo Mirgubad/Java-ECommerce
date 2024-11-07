@@ -1,10 +1,8 @@
 package com.dailycodework.dreamshops.controller;
 
 import com.dailycodework.dreamshops.dto.UserDto;
-import com.dailycodework.dreamshops.exceptions.ConflictException;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.model.User;
-import com.dailycodework.dreamshops.request.CreateUserRequest;
 import com.dailycodework.dreamshops.request.UpdadteUserRequest;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.user.IUserService;
@@ -20,9 +18,10 @@ import static org.springframework.http.HttpStatus.*;
 public class UserController {
     private final IUserService userService;
 
-    @GetMapping("/{userId}/user")
-    public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
+    @GetMapping("/user")
+    public ResponseEntity<ApiResponse> getUserById() {
         try {
+            Long userId = userService.getAuthenticatedUser().getId();
             User user = userService.getUserById(userId);
             UserDto userDto = userService.convertToDto(user);
             return ResponseEntity.ok(new ApiResponse("User fetched successfully", userDto));
@@ -31,20 +30,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/create/user")
-    public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdadteUserRequest request) {
         try {
-            User user = userService.createUser(request);
-            UserDto userDto = userService.convertToDto(user);
-            return ResponseEntity.status(CREATED).body(new ApiResponse("User created successfully", userDto));
-        } catch (ConflictException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
-        }
-    }
-
-    @PutMapping("/{userId}/update")
-    public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdadteUserRequest request, @PathVariable Long userId) {
-        try {
+            Long userId = userService.getAuthenticatedUser().getId();
             User user = userService.updateUser(request, userId);
             UserDto userDto = userService.convertToDto(user);
             return ResponseEntity.ok(new ApiResponse("User updated successfully", userDto));
@@ -53,9 +42,10 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}/delete")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<ApiResponse> deleteUser() {
         try {
+            Long userId = userService.getAuthenticatedUser().getId();
             userService.deleteUser(userId);
             return ResponseEntity.ok(new ApiResponse("User deleted successfully", null));
         } catch (NotFoundException e) {

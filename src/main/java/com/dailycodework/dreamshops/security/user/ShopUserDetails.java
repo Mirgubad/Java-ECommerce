@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 public class ShopUserDetails implements UserDetails {
-
     private Long id;
     private String email;
     private String password;
@@ -39,7 +38,7 @@ public class ShopUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return authorities;
     }
 
     @Override
