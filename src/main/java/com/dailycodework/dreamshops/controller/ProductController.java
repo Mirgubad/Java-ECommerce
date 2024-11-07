@@ -3,6 +3,7 @@ package com.dailycodework.dreamshops.controller;
 
 import com.dailycodework.dreamshops.criteria.ProductFilterCriteria;
 import com.dailycodework.dreamshops.dto.ProductDto;
+import com.dailycodework.dreamshops.exceptions.ConflictException;
 import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.model.Product;
 import com.dailycodework.dreamshops.request.AddProductRequest;
@@ -63,8 +64,8 @@ public class ProductController {
         try {
             ProductDto newProduct = productService.addProduct(product);
             return ResponseEntity.ok(new ApiResponse("Product added successfully", newProduct));
-        } catch (Exception e) {
-            return  ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
+        } catch (ConflictException e) {
+            return  ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(),null));
         }
     }
 

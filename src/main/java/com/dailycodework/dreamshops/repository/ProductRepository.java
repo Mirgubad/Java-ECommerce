@@ -26,4 +26,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT COUNT(p) FROM Product p WHERE LOWER(p.brand) LIKE LOWER(CONCAT('%', :brandName, '%')) AND LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     Long countByBrandAndName(@Param("brandName") String brandName, @Param("name") String name);
+
+    @Query("SELECT COUNT(p) > 0 FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')) AND LOWER(p.brand) = LOWER(:brand)")
+    boolean isExistsByNameAndBrand(String name, String brand);
+
+
+
 }
