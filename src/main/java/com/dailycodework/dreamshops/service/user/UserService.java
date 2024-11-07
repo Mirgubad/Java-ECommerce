@@ -12,6 +12,7 @@ import com.dailycodework.dreamshops.request.UpdadteUserRequest;
 import com.dailycodework.dreamshops.response.JwtResponse;
 import com.dailycodework.dreamshops.security.jwt.JwtUtils;
 import com.dailycodework.dreamshops.security.user.ShopUserDetails;
+import com.dailycodework.dreamshops.service.email.IEmailService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class UserService implements  IUserService {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
+    private final IEmailService emailService;
 
     @Override
     public User getUserById(Long userId) {
@@ -50,6 +53,12 @@ public class UserService implements  IUserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateTokenForUser(authentication);
         ShopUserDetails userDetails = (ShopUserDetails) authentication.getPrincipal();
+
+        emailService.sendEmail(request.getEmail(), "Welcome to DreamShops",
+                "Hello " + request.getFirstName() + ",\n\n" +
+                        "Thank you for registering with DreamShops. Your account has been created successfully.\n\n" +
+                        "Best regards,\n" +
+                        "DreamShops Team");
 
         return new JwtResponse(userDetails.getId(),jwt);
     }
