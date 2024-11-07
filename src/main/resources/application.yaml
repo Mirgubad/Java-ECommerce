@@ -26,3 +26,9 @@ api:
   prefix: /api/v1
 
 
+auth:
+  token:
+    tokenExpirationMsec: 3600000
+    jwtSecret: GnsGEgrpTUatnHVyKeQsHRnytGnsGEgrpTUatnHVyKeQsHRnyt
+
+
