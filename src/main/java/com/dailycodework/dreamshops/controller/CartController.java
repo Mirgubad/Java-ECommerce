@@ -5,6 +5,7 @@ import com.dailycodework.dreamshops.exceptions.NotFoundException;
 import com.dailycodework.dreamshops.model.Cart;
 import com.dailycodework.dreamshops.response.ApiResponse;
 import com.dailycodework.dreamshops.service.cart.ICartService;
+import com.dailycodework.dreamshops.service.user.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,13 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class CartController {
     private final ICartService cartService;
     private final ModelMapper modelMapper;
+    private final IUserService userService;
 
-    @GetMapping("/{cardId}")
-    public ResponseEntity<ApiResponse> getCart(@PathVariable Long cardId) {
+    @GetMapping("/cart")
+    public ResponseEntity<ApiResponse> getCart() {
         try {
-            Cart cart= cartService.getCartById(cardId);
+            Long userId = userService.getAuthenticatedUser().getId();
+            Cart cart= cartService.getCartByUserId(userId);
             CartDto cartDto = mapToCartDto(cart);
             return ResponseEntity.ok(new ApiResponse("Success", cartDto));
         } catch (NotFoundException e) {
@@ -42,10 +45,11 @@ public class CartController {
         }
     }
 
-    @GetMapping("{cartId}/total-price")
-    public  ResponseEntity<ApiResponse> getTotalAmount(@PathVariable Long cartId){
+    @GetMapping("cart/total-price")
+    public  ResponseEntity<ApiResponse> getTotalAmount(){
         try {
-            BigDecimal totalAmount = cartService.getTotalPrice(cartId);
+            Long userId = userService.getAuthenticatedUser().getId();
+            BigDecimal totalAmount = cartService.getTotalPrice(userId);
             return ResponseEntity.ok(new ApiResponse("Total amount", totalAmount));
         } catch (NotFoundException e) {
             return  ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));

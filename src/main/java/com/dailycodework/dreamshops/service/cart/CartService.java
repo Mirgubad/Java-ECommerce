@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -34,7 +33,8 @@ public class CartService implements  ICartService {
 
     @Override
     public Cart getCartByUserId(Long userId) {
-        return cartRepository.getByUserId(userId);
+        return cartRepository.getByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Cart not found"));
     }
 
     @Override
@@ -43,12 +43,13 @@ public class CartService implements  ICartService {
     Cart cart =getCartById(id);
     cartItemRepository.deleteAllByCartId(id);
     cart.getItems().clear();
+    cart.setTotalAmount(BigDecimal.ZERO);
     cartRepository.deleteById(id);
     }
 
     @Override
-    public BigDecimal getTotalPrice(Long id) {
-        Cart cart = getCartById(id);
+    public BigDecimal getTotalPrice(Long userId) {
+        Cart cart = getCartByUserId(userId);
         return  cart.getItems()
                 .stream()
                 .map(CartItem::getTotalPrice)
@@ -56,11 +57,11 @@ public class CartService implements  ICartService {
     }
 
     public Cart initializeNewCart(User user) {
-        return Optional.ofNullable(getCartByUserId(user.getId()))
-                .orElseGet(() -> {
-                    Cart cart = new Cart();
-                    cart.setUser(user);
-                    return cartRepository.save(cart);
-                });
+        Cart cart = cartRepository.getByUserId(user.getId()).orElseGet(() -> {
+            Cart newCart = new Cart();
+            newCart.setUser(user);
+            return cartRepository.save(newCart);
+        });
+        return cart;
     }
 }

@@ -28,7 +28,7 @@ public class OrderService implements IOrderService{
 
     @Override
     public OrderDto placeOrder(Long userId) {
-        Cart cart   = cartService.getCartByUserId(userId);
+        Cart cart = cartService.getCartByUserId(userId);
         Order order = createOrder(cart);
         List<OrderItem> orderItemList = createOrderItems(order, cart);
         updateOrderItems(order, orderItemList);
