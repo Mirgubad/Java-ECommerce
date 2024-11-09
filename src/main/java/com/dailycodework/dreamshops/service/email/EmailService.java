@@ -3,7 +3,7 @@ package com.dailycodework.dreamshops.service.email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.kafka.clients.producer.Producer;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class EmailService implements IEmailService {
     private final JavaMailSender mailSender;
+    private final Producer<String, String> producer;
+
 
     @Override
     public void sendEmail(String to, String subject, String content) {
